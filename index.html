@@ -8,7 +8,10 @@
     <title>Vacances</title>
     <!-- <link rel="stylesheet" href="./index.css"> -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="./index.js"></script>
+    <script defer src="./utils/index.js"></script>
+    <script defer src="./src/calendrier.js"></script>
+    <script defer src="./src/text.js"></script>
+    <script defer src="./src/index.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -22,14 +25,14 @@
     </script>
 </head>
 
-<body>
+<body class="h-screen">
 
     <div class="flex flex-col justify-center items-center ">
 
         <h1 class="text-center text-2xl font-bold  mb-8" id="title_principal"></h1>
 
         <div class="flex justify-center w-full ">
-            <form class=" bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 mt-4">
+            <form class=" bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 mt-4" id="form">
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="annee">
                         Saisir une année
@@ -38,44 +41,45 @@
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-center"
                         type="text" name="annee" id="annee" placeholder="Format YYYY">
                 </div>
-                <div class="flex justify-end">
+                <div class="flex justify-between gap-1">
+                    <button
+                        class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        id="btn_calendrier" name="btn_calendrier" type="submit">
+                        Calendrier
+                    </button>
+                    <button
+                        class="bg-orange-500 w-50 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        id="btn_text" name="btn_text" type="submit">
+                        Texte
+                    </button>
                     <button
                         class="bg-blue-900 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                        type="submit" name="afficher" id="afficher">Afficher
+                        type="submit" name="reset" id="reset">Reset
                     </button>
+
                 </div>
 
             </form>
         </div>
 
-        <div class="hidden" id="visibility_btn">
-            <button
-                class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                id="btn_calendrier">
-                Calendrier
-            </button>
-            <button
-                class="bg-orange-500 w-50 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                id="btn_text">
-                Texte
-            </button>
-        </div>
 
-        <div class="sm:flex sm:flex-row mt-8 block" id="visibility_text">
+        <div class="sm:flex sm:flex-row mt-8 " id="visibility_text">
 
-            <section class="p-3 flex flex-col ">
+            <section class="p-3 flex flex-col" id="section1">
                 <h2 class="text-center text-2xl font-bold  mb-8" id="title_jours_feries"></h2>
-                <div class="grid grid-cols-2 grid-flow-row sm:grid-rows-4 sm:grid-flow-col gap-4 sm:gap-1 md:gap-2" id="resultat_jours_feries"></div>
+                <div class="grid grid-cols-2 grid-flow-row sm:grid-rows-4 sm:grid-flow-col gap-4 sm:gap-1 md:gap-2"
+                    id="resultat_jours_feries"></div>
             </section>
 
-            <section class="p-3 flex flex-col">
+            <section class="p-3 flex flex-col" id="section2">
                 <h2 class="text-center text-2xl font-bold mb-8" id="title_vacances"></h2>
-                <div class="grid grid-cols-2 grid-flow-row sm:grid-rows-2 sm:grid-flow-col gap-4 sm:gap-1 md:gap-2" id="resultat_vacances"></div>
+                <div class="grid grid-cols-2 grid-flow-row sm:grid-rows-2 sm:grid-flow-col gap-4 sm:gap-1 md:gap-2"
+                    id="resultat_vacances"></div>
             </section>
         </div>
 
         <div id="visibility_calendar">
-            
+            lol
         </div>
 
     </div>
