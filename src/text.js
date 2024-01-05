@@ -1,4 +1,4 @@
-const createText = (data)=>{
+const createText = (data) => {
     for (const key in data) {
         if (key === "jours_feries") {
             //console.log("jours_feries", data[key]);
@@ -20,16 +20,11 @@ const createText = (data)=>{
                 cardBody.style.paddingBottom = "0.5rem";
                 cardBody.textContent = `${r.dte.toLocaleDateString("fr-FR", options)}`;
 
-                //joursFeriesDiv.classList.add("shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight")
                 joursFeriesDiv.style.boxShadow = "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)";
                 joursFeriesDiv.style.appearance = "none";
                 joursFeriesDiv.style.border = "1px";
                 joursFeriesDiv.style.borderRadius = "0.25rem";
                 joursFeriesDiv.style.width = "100%";
-                /* joursFeriesDiv.style.paddingTop = "0.5rem";
-                joursFeriesDiv.style.paddingBottom = "0.5rem";
-                joursFeriesDiv.style.paddingLeft = "0.75rem";
-                joursFeriesDiv.style.paddingRight = "0.75rem"; */
                 joursFeriesDiv.style.marginBottom = "0.5rem";
                 joursFeriesDiv.style.width = "150px";
 

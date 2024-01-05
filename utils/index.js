@@ -154,3 +154,16 @@ const getData = async (annee) => {
         .catch((error) => console.log(error))
     return conges;
 }
+
+const estAnneeValide = (annee) => {
+
+    if (annee === "") return false;
+
+    const anneeNumerique = parseInt(annee, 10);
+    const estNombre = !isNaN(anneeNumerique); // Vérifie si c'est un nombre
+    const estQuatreChiffres = annee.toString().length === 4; // Vérifie si elle a quatre chiffres
+    const estAnneeRaisonnable = anneeNumerique > 1900 && anneeNumerique <= new Date().getFullYear(); // Optionnel: vérifie si l'année est raisonnable (par exemple, après 1900 et pas dans le futur)
+
+
+    return estNombre && estQuatreChiffres && estAnneeRaisonnable;
+}
