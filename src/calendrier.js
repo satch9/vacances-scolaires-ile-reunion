@@ -1,8 +1,40 @@
-function createCalendar(annee, ephemeride, conges) {
-    /* const calendrierDiv = document.createElement("div");
-    calendrierDiv.className = "calendar"; */
+function checkRentree(jourDate, conges) {
+    /* // Convertir la date en format JJ/MM/AAAA pour la comparaison
+    const jourDateFormat = `${String(jourDate.getDate()).padStart(2, '0')}/${String(jourDate.getMonth() + 1).padStart(2, '0')}/${jourDate.getFullYear()}`;
 
-    // Mapper les noms des mois aux indices numériques
+    // Vérifier si la date correspond à une date de rentrée scolaire
+    const isRentreeEleve = conges.rentree_scolaire.data.some(e => e.date_de_rentree_eleve === jourDateFormat);
+    const isRentreeEnseignant = conges.rentree_scolaire.data.some(e => e.date_de_rentree_enseignant === jourDateFormat);
+
+    return isRentreeEleve || isRentreeEnseignant; */
+
+    const jourDateFormat = `${String(jourDate.getDate()).padStart(2, '0')}/${String(jourDate.getMonth() + 1).padStart(2, '0')}/${jourDate.getFullYear()}`;
+
+    const rentreeEleve = conges.rentree_scolaire.data.some(e => e.date_de_rentree_eleve === jourDateFormat);
+    const rentreeEnseignant = conges.rentree_scolaire.data.some(e => e.date_de_rentree_enseignant === jourDateFormat);
+
+    if (rentreeEleve) {
+        return {
+            date: rentreeEleve.date_de_rentree_eleve,
+            type: 'Élèves'
+        };
+    }
+    if (rentreeEnseignant) {
+        return {
+            date: rentreeEnseignant.date_de_rentree_enseignant,
+            type: 'Enseignants'
+        };
+    }
+
+    return null;
+}
+
+function createCalendar(annee, ephemeride, conges) {
+    // Effacer le contenu précédent
+    visibility_calendar.innerHTML = '';
+
+    console.log("conges", conges);
+
     const moisIndices = {
         "Janvier": 0,
         "Février": 1,
@@ -18,33 +50,78 @@ function createCalendar(annee, ephemeride, conges) {
         "Décembre": 11
     };
 
-    for (const mois in ephemeride) {
+    const moisOrdre = [
+        "Août",
+        "Septembre",
+        "Octobre",
+        "Novembre",
+        "Décembre",
+        "Janvier",
+        "Février",
+        "Mars",
+        "Avril",
+        "Mai",
+        "Juin",
+        "Juillet",
+    ];
+
+
+    moisOrdre.forEach(mois => {
         const jours = ephemeride[mois];
         const moisIndex = moisIndices[mois];
-        const moisDiv = document.createElement("div");
-        moisDiv.className = "month";
-        moisDiv.textContent = mois.charAt(0).toUpperCase() + mois.slice(1); // Janvier, Février, etc.
+        let anneeMois = moisIndex >= 7 ? annee : parseInt(annee) + 1;
+
+        const moisDiv = createHtmlElement('div', 'bg-white shadow overflow-hidden rounded-lg mb-6', '');
+        const moisHeader = createHtmlElement('div', 'px-4 py-5 sm:px-6 border-b border-gray-200 text-lg font-medium text-gray-900', mois + ' ' + anneeMois);
+        moisDiv.appendChild(moisHeader);
+
+        // Ajouter les jours de la semaine sous le titre du mois
+        const daysOfWeekDiv = createDaysOfWeek();
+        moisDiv.appendChild(daysOfWeekDiv);
+
+        // Déterminer le premier jour du mois
+        const firstDayOfMonth = getFirstDayOfMonth(anneeMois, moisIndex);
+        const gridDiv = createHtmlElement('div', 'grid grid-cols-7 gap-4 p-4 sm:grid-cols-7 md:grid-cols-7 lg:grid-cols-7', '');
+
+        // Ajouter des jours du mois précédent si nécessaire
+        if (firstDayOfMonth !== 1) { // 1 représente Lundi
+            const daysToAdd = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+            for (let i = 0; i < daysToAdd; i++) {
+                const emptyDayDiv = document.createElement('div');
+                gridDiv.appendChild(emptyDayDiv);
+            }
+        }
+
 
         jours.forEach((jour, index) => {
-            const jourDiv = document.createElement("div");
-            jourDiv.className = "day";
             const jourNum = index + 1;
-            const texteJour = `${jourNum}: ${jour[0]} ${jour[1]}`;
+            const jourDivClass = "flex justify-center items-center w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 bg-white border rounded-lg text-center cursor-pointer hover:bg-gray-100";
 
-            // Vérifier les jours fériés
-            const jourFerie = conges.jours_feries.find(j => j.dte.getDate() === jourNum && j.dte.getMonth() === moisIndex);
-            if (jourFerie) {
-                jourDiv.textContent = `${texteJour}`;
-                jourDiv.className = "jour_ferie";
-            } else {
-                jourDiv.textContent = texteJour;
+            const jourDiv = createHtmlElement('div', jourDivClass, jourNum.toString());
+
+            const jourDate = new Date(anneeMois, moisIndex, jourNum);
+            const isJourFerie = conges.jours_feries.find(j => j.dte.getDate() === jourNum && j.dte.getMonth() === moisIndex);
+            const rentreeInfo = checkRentree(jourDate, conges); // Fonction à créer pour vérifier les jours de rentrée
+
+            if (isJourFerie) {
+                jourDiv.classList.add('bg-red-100', 'text-red-800');
+            } else if (rentreeInfo) {
+                jourDiv.classList.add('bg-blue-100', 'text-blue-800');
             }
 
-            moisDiv.appendChild(jourDiv);
+            jourDiv.onclick = () => {
+                let popupText = `${jourNum}: ${jour[1]} ${jour[0]}`;
+                if (rentreeInfo) {
+                    popupText += ` / Rentrée scolaire: ${rentreeInfo.type}`;
+                }
+                openPopup(popupText);
+            }
+
+            gridDiv.appendChild(jourDiv);
         });
 
+        moisDiv.appendChild(gridDiv);
         visibility_calendar.appendChild(moisDiv);
-    }
+    });
 
-    //visibility_calendar.appendChild(calendrierDiv);
 }

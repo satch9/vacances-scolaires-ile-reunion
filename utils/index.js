@@ -16,13 +16,40 @@ const isBissextile = (annee) => {
     return (annee % 4 === 0 && annee % 100 !== 0) || (annee % 400 === 0);
 }
 
-let conges = {
-    vacances: [],
-    jours_feries: []
-}
+
 
 const getData = async (annee) => {
-
+    let data = {
+        vacances: [],
+        jours_feries: [],
+        rentree_scolaire: {
+            academie: "Ile de la Réunion",
+            data: [{
+                    periode: "2021-2022",
+                    date_de_rentree_eleve: "16/08/2021",
+                    date_de_rentree_enseignant: "13/08/2021"
+                }, {
+                    periode: "2022-2023",
+                    date_de_rentree_eleve: "16/08/2022",
+                    date_de_rentree_enseignant: "12/08/2022"
+                }, {
+                    periode: "2023-2024",
+                    date_de_rentree_eleve: "17/08/2023",
+                    date_de_rentree_enseignant: "16/08/2023"
+                },
+                {
+                    periode: "2024-2025",
+                    date_de_rentree_eleve: "19/08/2024",
+                    date_de_rentree_enseignant: "16/08/2024"
+                },
+                {
+                    periode: "2025-2026",
+                    date_de_rentree_eleve: "19/08/2025",
+                    date_de_rentree_enseignant: "18/08/2025"
+                },
+            ]
+        }
+    }
     //console.log("année", annee);
 
     const JourAn = new Date(annee + 1, "00", "01")
@@ -64,19 +91,19 @@ const getData = async (annee) => {
                         if (element.fields) {
                             //console.log("element", element.fields)
                             if (element.fields.description === "Vacances après 1ère période") {
-                                conges.vacances[0] = (element.fields)
+                                data.vacances[0] = (element.fields)
                             }
                             if (element.fields.description === "Vacances d'Été austral") {
-                                conges.vacances[1] = (element.fields)
+                                data.vacances[1] = (element.fields)
                             }
                             if (element.fields.description === "Vacances après 3ème période") {
-                                conges.vacances[2] = (element.fields)
+                                data.vacances[2] = (element.fields)
                             }
                             if (element.fields.description === "Vacances après 4ème période") {
-                                conges.vacances[3] = (element.fields)
+                                data.vacances[3] = (element.fields)
                             }
                             if (element.fields.description === "Vacances d'Hiver austral") {
-                                conges.vacances[4] = (element.fields)
+                                data.vacances[4] = (element.fields)
                             }
 
                         }
@@ -87,64 +114,64 @@ const getData = async (annee) => {
             }
 
 
-            conges.jours_feries.push({
+            data.jours_feries.push({
                 name: "Toussaint",
                 dte: Toussaint
             });
-            conges.jours_feries.push({
+            data.jours_feries.push({
                 name: "Armistice",
                 dte: Armistice
             });
-            conges.jours_feries.push({
+            data.jours_feries.push({
                 name: "Fête Caf",
                 dte: FeteCaf
             });
-            conges.jours_feries.push({
+            data.jours_feries.push({
                 name: "Noël",
                 dte: Noel
             });
 
-            conges.jours_feries.push({
+            data.jours_feries.push({
                 name: "Jour de l'An",
                 dte: JourAn
             });
-            conges.jours_feries.push({
+            data.jours_feries.push({
                 name: "Vendredi Saint",
                 dte: VendrediSaint
             })
-            conges.jours_feries.push({
+            data.jours_feries.push({
                 name: "Pâques",
                 dte: Paques
             });
-            conges.jours_feries.push({
+            data.jours_feries.push({
                 name: "Lundi de Pâques",
                 dte: LundiPaques
             });
-            conges.jours_feries.push({
+            data.jours_feries.push({
                 name: "Fête du travail",
                 dte: FeteTravail
             });
-            conges.jours_feries.push({
+            data.jours_feries.push({
                 name: "Victoire de 1945",
                 dte: Victoire1945
             });
-            conges.jours_feries.push({
+            data.jours_feries.push({
                 name: "Ascension",
                 dte: Ascension
             });
-            conges.jours_feries.push({
+            data.jours_feries.push({
                 name: "Pentecôte",
                 dte: Pentecote
             });
-            conges.jours_feries.push({
+            data.jours_feries.push({
                 name: "Lundi de Penteôte",
                 dte: LundiPentecote
             });
-            conges.jours_feries.push({
+            data.jours_feries.push({
                 name: "Fête Nationale",
                 dte: FeteNationale
             });
-            conges.jours_feries.push({
+            data.jours_feries.push({
                 name: "Assomption",
                 dte: Assomption
             });
@@ -152,7 +179,7 @@ const getData = async (annee) => {
 
         })
         .catch((error) => console.log(error))
-    return conges;
+    return data;
 }
 
 const estAnneeValide = (annee) => {
@@ -166,4 +193,33 @@ const estAnneeValide = (annee) => {
 
 
     return estNombre && estQuatreChiffres && estAnneeRaisonnable;
+}
+
+const createHtmlElement = (tag, classes, text = '') => {
+    const element = document.createElement(tag);
+    element.className = classes;
+    element.textContent = text;
+    return element;
+}
+
+const openPopup = (text) => {
+    alert(text); // Ou utilisez une méthode plus élaborée pour afficher une pop-up
+}
+
+const getFirstDayOfMonth = (annee, mois) => {
+    return new Date(annee, mois, 1).getDay();
+}
+
+const createDaysOfWeek = () => {
+    const jours = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+    const daysOfWeekDiv = document.createElement('div');
+    daysOfWeekDiv.className = 'grid grid-cols-7 text-center font-bold';
+
+    jours.forEach(jour => {
+        const dayDiv = document.createElement('div');
+        dayDiv.textContent = jour;
+        daysOfWeekDiv.appendChild(dayDiv);
+    });
+
+    return daysOfWeekDiv;
 }

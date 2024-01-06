@@ -1,39 +1,29 @@
 const createText = (data) => {
     for (const key in data) {
         if (key === "jours_feries") {
-            //console.log("jours_feries", data[key]);
 
-            data[key].forEach((r) => {
+            console.log("data.jours_feries", data.jours_feries);
 
-                //console.log("r", r)
-                const joursFeriesDiv = document.createElement("div");
-                const cardHeader = document.createElement("div");
-                cardHeader.textContent = `${r.name}`;
-                cardHeader.style.border = "1px";
-                cardHeader.style.backgroundColor = "#5B8CC8";
-                cardHeader.style.textAlign = "center";
-                cardHeader.style.paddingTop = "0.5rem";
-                cardHeader.style.paddingBottom = "0.5rem";
-                const cardBody = document.createElement("div");
-                cardBody.style.textAlign = "center";
-                cardBody.style.paddingTop = "0.5rem";
-                cardBody.style.paddingBottom = "0.5rem";
-                cardBody.textContent = `${r.dte.toLocaleDateString("fr-FR", options)}`;
+            data.jours_feries.forEach((r) => {
+                // Création de la div principale pour un jour férié
+                const joursFeriesDiv = createHtmlElement('div', 'shadow appearance-none border rounded w-full py-2 px-3 mb-4');
 
-                joursFeriesDiv.style.boxShadow = "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)";
-                joursFeriesDiv.style.appearance = "none";
-                joursFeriesDiv.style.border = "1px";
-                joursFeriesDiv.style.borderRadius = "0.25rem";
-                joursFeriesDiv.style.width = "100%";
-                joursFeriesDiv.style.marginBottom = "0.5rem";
-                joursFeriesDiv.style.width = "150px";
+                // Création du header
+                const cardHeader = createHtmlElement('div', 'text-center bg-blue-500 text-white font-bold py-1', r.name);
+
+                // Création du body
+                const cardBody = createHtmlElement('div', 'text-center', r.dte.toLocaleDateString("fr-FR", options));
 
                 if (isCloseToDate(aujourdhui, r.dte)) {
-                    joursFeriesDiv.style.fontWeight = "bold";
-                    joursFeriesDiv.style.border = "2px solid red";
+                    joursFeriesDiv.classList.add("border-2");
+                    joursFeriesDiv.classList.add("border-rose-500");
                 }
+
+                // Assemblage des éléments
                 joursFeriesDiv.appendChild(cardHeader);
                 joursFeriesDiv.appendChild(cardBody);
+
+                // Ajout au DOM
                 resultat_jours_feries.appendChild(joursFeriesDiv);
             });
 
@@ -41,50 +31,36 @@ const createText = (data) => {
 
         }
         if (key === "vacances") {
-            //console.log("vacances", data[key]);
+            console.log("vacances", data.vacances);
+            /* let str = "à l'île de la";
 
-            let str = "à l'île de la";
-
-            title_principal.textContent = `${str[0].toUpperCase()}${str.slice(1)} ${data[key][0].location} pour l'année scolaire ${data[key][0].annee_scolaire}`;
+            title_principal.textContent = `${str[0].toUpperCase()}${str.slice(1)} ${data[key][0].location} pour l'année scolaire ${data[key][0].annee_scolaire}`; */
 
             title_jours_feries.textContent = `Jours fériés`;
             title_vacances.textContent = `Vacances `;
 
-            data[key].forEach((r) => {
+            data.vacances.forEach((r) => {
+                // Création de la div principale pour les vacances
+                const vacancesDiv = createHtmlElement('div', 'shadow border rounded w-full mb-4', '');
 
-                const vacancesDiv = document.createElement("div");
-                const cardHeader = document.createElement("div");
-                cardHeader.textContent = `${r.description}`;
-                cardHeader.style.border = "1px";
-                cardHeader.style.backgroundColor = "#5B8CC8";
-                cardHeader.style.textAlign = "center";
-                cardHeader.style.paddingTop = "0.5rem";
-                cardHeader.style.paddingBottom = "0.5rem";
-                const cardBody = document.createElement("div");
-                cardBody.style.textAlign = "center";
-                cardBody.style.paddingTop = "0.5rem";
-                cardBody.style.paddingBottom = "0.5rem";
-                cardBody.textContent = `${(new Date(r.start_date)).toLocaleDateString("fr-FR", options)} au ${(new Date(r.end_date)).toLocaleDateString("fr-FR", options)}`;
+                // Création du header des vacances
+                const cardHeader = createHtmlElement('div', 'bg-blue-500 text-white text-center font-bold py-1', r.description);
 
-                vacancesDiv.style.boxShadow = "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)";
-                vacancesDiv.style.appearance = "none";
-                vacancesDiv.style.border = "1px";
-                vacancesDiv.style.borderRadius = "0.25rem";
-                vacancesDiv.style.width = "100%";
-                /* vacancesDiv.style.paddingTop = "0.5rem";
-                vacancesDiv.style.paddingBottom = "0.5rem";
-                vacancesDiv.style.paddingLeft = "0.75rem";
-                vacancesDiv.style.paddingRight = "0.75rem"; */
-                vacancesDiv.style.marginBottom = "0.5rem";
-                vacancesDiv.style.width = "150px";
+                // Création du body des vacances
+                let dateDebut = new Date(r.start_date).toLocaleDateString("fr-FR", options);
+                let dateFin = new Date(r.end_date).toLocaleDateString("fr-FR", options);
+                const cardBody = createHtmlElement('div', 'text-center py-1', `${dateDebut} au ${dateFin}`);
 
+                // Ajout de styles conditionnels si la date est aujourd'hui
                 if (isTodayBetween(r.start_date, r.end_date)) {
-                    vacancesDiv.style.fontWeight = "bold";
-                    vacancesDiv.style.border = "2px solid red";
+                    vacancesDiv.classList.add('font-bold', 'border-2', 'border-red-500');
                 }
 
+                // Assemblage des éléments
                 vacancesDiv.appendChild(cardHeader);
                 vacancesDiv.appendChild(cardBody);
+
+                // Ajout au DOM
                 resultat_vacances.appendChild(vacancesDiv);
             });
 

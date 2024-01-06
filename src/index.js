@@ -408,8 +408,6 @@ const aujourdhui = new Date();
 let fetchData;
 
 
-
-
 const options = {
     weekday: 'long',
     year: 'numeric',
@@ -436,7 +434,7 @@ function handleCalendrierClick(annee, ephemeride, data) {
 
 }
 
-function handleTextClick(data) {
+function handleTextClick(data = null) {
     //console.log("btn_text cliqué");
     visibility_calendar.classList.add("hidden");
     visibility_text.classList.remove("hidden");
@@ -447,6 +445,9 @@ function handleTextClick(data) {
     //console.log("data", data);
     resultat_jours_feries.textContent = "";
     resultat_vacances.textContent = "";
+
+    let str = "à l'île de la";
+    title_principal.textContent = `${str[0].toUpperCase()}${str.slice(1)} ${data['vacances'][0].location} pour l'année scolaire ${data['vacances'][0].annee_scolaire}`;
 
     createText(data);
 }
@@ -467,15 +468,14 @@ form.addEventListener('submit', async (e) => {
     }
 
     // Réinitialiser fetchData et récupérer les nouvelles données
+    fetchData = null;
     fetchData = await getData(parseInt(anneeSaisie));
 
     switch (buttonClicked) {
         case "btn_calendrier":
-
             handleCalendrierClick(e.target[0].value, ephemeride, fetchData);
             break;
         case "btn_text":
-
             handleTextClick(fetchData);
             break;
 
