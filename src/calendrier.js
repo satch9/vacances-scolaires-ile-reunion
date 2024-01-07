@@ -1,13 +1,4 @@
 function checkRentree(jourDate, conges) {
-    /* // Convertir la date en format JJ/MM/AAAA pour la comparaison
-    const jourDateFormat = `${String(jourDate.getDate()).padStart(2, '0')}/${String(jourDate.getMonth() + 1).padStart(2, '0')}/${jourDate.getFullYear()}`;
-
-    // Vérifier si la date correspond à une date de rentrée scolaire
-    const isRentreeEleve = conges.rentree_scolaire.data.some(e => e.date_de_rentree_eleve === jourDateFormat);
-    const isRentreeEnseignant = conges.rentree_scolaire.data.some(e => e.date_de_rentree_enseignant === jourDateFormat);
-
-    return isRentreeEleve || isRentreeEnseignant; */
-
     const jourDateFormat = `${String(jourDate.getDate()).padStart(2, '0')}/${String(jourDate.getMonth() + 1).padStart(2, '0')}/${jourDate.getFullYear()}`;
 
     const rentreeEleve = conges.rentree_scolaire.data.some(e => e.date_de_rentree_eleve === jourDateFormat);
@@ -63,13 +54,22 @@ function createCalendar(annee, ephemeride, conges) {
         "Mai",
         "Juin",
         "Juillet",
+        "Août",
     ];
 
+    let anneeMois;
+    let moisIndex;
 
-    moisOrdre.forEach(mois => {
+    moisOrdre.forEach((mois, moisOrdreIndex) => {
         const jours = ephemeride[mois];
-        const moisIndex = moisIndices[mois];
-        let anneeMois = moisIndex >= 7 ? annee : parseInt(annee) + 1;
+        if (moisOrdreIndex === 12) {
+            moisIndex = moisIndices[mois];
+            anneeMois = parseInt(annee) + 1;
+        } else {
+            moisIndex = moisIndices[mois];
+            anneeMois = moisIndex >= 7 ? annee : parseInt(annee) + 1;
+        }
+
 
         const moisDiv = createHtmlElement('div', 'bg-white shadow overflow-hidden rounded-lg mb-6', '');
         const moisHeader = createHtmlElement('div', 'px-4 py-5 sm:px-6 border-b border-gray-200 text-lg font-medium text-gray-900', mois + ' ' + anneeMois);
@@ -107,6 +107,18 @@ function createCalendar(annee, ephemeride, conges) {
                 jourDiv.classList.add('bg-red-100', 'text-red-800');
             } else if (rentreeInfo) {
                 jourDiv.classList.add('bg-blue-100', 'text-blue-800');
+            }
+
+            // Vérifier si c'est un jour de vacances
+            const inVacationPeriod = conges.vacances.some(v => {
+                const startDate = new Date(v.start_date);
+                const endDate = new Date(v.end_date);
+                endDate.setDate(endDate.getDate() - 1); // Les vacances s'arrêtent à date de fin -1
+                return jourDate >= startDate && jourDate <= endDate;
+            });
+
+            if (inVacationPeriod) {
+                jourDiv.classList.add('border-2', 'border-green-500');
             }
 
             jourDiv.onclick = () => {
